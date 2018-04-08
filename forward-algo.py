@@ -1,4 +1,5 @@
 states = ('Healthy', 'Fever')
+
 end_state = 'E'
  
 observations = ('normal', 'cold', 'dizzy')
@@ -18,6 +19,17 @@ emission_prob = {
 
 def forward(observations, states, initial_prob, transition_prob, emission_prob):
 
-  return None
+  fwd = []
+  fwd_cur = {}
+  fwd_prev = {}
+
+  for i, state in enumerate(states):
+    fwd_cur[state] = initial_prob[state] * emission_prob[state]['normal']
+  
+  fwd.append(fwd_cur)
+  fwd_prev = fwd_cur
+  fwd_cur = {}
+
+  return fwd
 
 print forward(observations, states, initial_prob, transition_prob, emission_prob)
