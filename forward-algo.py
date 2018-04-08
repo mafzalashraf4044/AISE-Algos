@@ -16,7 +16,6 @@ emission_prob = {
    'Fever' : {'normal': 0.1, 'cold': 0.3, 'dizzy': 0.6},
    }
 
-
 def forward(observations, states, initial_prob, transition_prob, emission_prob):
 
   fwd = []
@@ -29,6 +28,15 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
   fwd.append(fwd_cur)
   fwd_prev = fwd_cur
   fwd_cur = {}
+
+  for i, obs in enumerate(observations):
+    if i >= 1:
+      fwd_cur = {}
+      for i, state in enumerate(states):
+        fwd_cur[state] = sum(fwd_prev[prev_state] * transition_prob[prev_state][state] * emission_prob[state][obs] for prev_state in fwd_prev)
+
+      fwd.append(fwd_cur)
+      fwd_prev = fwd_cur
 
   return fwd
 
