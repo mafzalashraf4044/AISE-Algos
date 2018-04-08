@@ -41,6 +41,9 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
 
   final_prob = sum(fwd_prev[prev_state] * transition_prob[prev_state][end_state] for prev_state in fwd_prev)
 
-  return fwd
+  return fwd, final_prob
 
-print forward(observations, states, initial_prob, transition_prob, emission_prob)
+fwd, final_prob = forward(observations, states, initial_prob, transition_prob, emission_prob)
+
+print "Trellis: ", fwd
+print "Probability of given sequence: ", final_prob
