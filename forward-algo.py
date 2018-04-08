@@ -21,6 +21,7 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
   fwd = []
   fwd_cur = {}
   fwd_prev = {}
+  final_prob = 0
 
   for i, state in enumerate(states):
     fwd_cur[state] = initial_prob[state] * emission_prob[state]['normal']
@@ -37,6 +38,8 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
 
       fwd.append(fwd_cur)
       fwd_prev = fwd_cur
+
+  final_prob = sum(fwd_prev[prev_state] * transition_prob[prev_state][end_state] for prev_state in fwd_prev)
 
   return fwd
 
