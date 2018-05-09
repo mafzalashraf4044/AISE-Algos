@@ -29,6 +29,11 @@ emission_prob = {
   'F' : {'<1': 0.36, '<2': 0.26, '<4': 0.22, '<6': 0.04, '>=6': 0.02},
 }
 
+def max_key_of_dic(dictionary):
+  v = [dictionary[key] for key in dictionary]
+  k = [key for key in dictionary]
+  return k[v.index(max(v))]
+
 def forward(observations, states, initial_prob, transition_prob, emission_prob):
 
   viterbi = []
@@ -40,10 +45,7 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
   for i, state in enumerate(states):
     viterbi_cur[state] = initial_prob[state] * emission_prob[state][observations[0]]
 
-  v = [viterbi_cur[curr_state] for curr_state in viterbi_cur]
-  k = [curr_state for curr_state in viterbi_cur]
-  backpointers.append(k[v.index(max(v))])
-
+  backpointers.append(max_key_of_dic(viterbi_cur))
   viterbi.append(viterbi_cur)
   viterbi_prev = viterbi_cur
   viterbi_cur = {}
@@ -54,10 +56,7 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
       for i, state in enumerate(states):
         viterbi_cur[state] = max(viterbi_prev[prev_state] * transition_prob[prev_state][state] * emission_prob[state][obs] for prev_state in viterbi_prev)
         
-      v = [viterbi_cur[curr_state] for curr_state in viterbi_cur]
-      k = [curr_state for curr_state in viterbi_cur]
-      backpointers.append(k[v.index(max(v))])
-
+      backpointers.append(max_key_of_dic(viterbi_cur))
       viterbi.append(viterbi_cur)
       viterbi_prev = viterbi_cur
 
@@ -67,10 +66,14 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
 
 viterbi, final_prob, backpointers = forward(observations, states, initial_prob, transition_prob, emission_prob)
 
+print "Trellis: "
+
 pp = pprint.PrettyPrinter(indent=2)
 pp.pprint(viterbi)
+
+print "Backpointers: "
 
 pp = pprint.PrettyPrinter(indent=2)
 pp.pprint(backpointers)
 
-print "Probability of given sequence: ", final_prob
+print "Max probability of given sequence: ", final_prob
