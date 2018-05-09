@@ -5,6 +5,7 @@ states = ('A+', 'A', 'B', 'C', 'D', 'E', 'F')
 end_state = 'END'
  
 observations = ('<2', '<4', '>=6')
+# observations = ('>=6', '>=6', '>=6')
  
 initial_prob = {'A+': 0.12, 'A': 0.24, 'B': 0.28, 'C': 0.2, 'D': 0.04, 'E': 0.04, 'F': 0.08}
  
@@ -36,7 +37,7 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
   final_prob = 0
 
   for i, state in enumerate(states):
-    fwd_cur[state] = initial_prob[state] * emission_prob[state]['<2']
+    fwd_cur[state] = initial_prob[state] * emission_prob[state][observations[0]]
   
   fwd.append(fwd_cur)
   fwd_prev = fwd_cur
@@ -56,6 +57,8 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
   return fwd, final_prob
 
 fwd, final_prob = forward(observations, states, initial_prob, transition_prob, emission_prob)
+
+print "Trellis: "
 
 pp = pprint.PrettyPrinter(indent=2)
 pp.pformat(fwd)
