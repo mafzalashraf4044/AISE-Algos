@@ -20,12 +20,17 @@ emission_probability = {
 def forward(observations, states, initial_prob, transition_prob, emission_prob):
 
   viterbi = []
+  backpointers = []
   viterbi_cur = {}
   viterbi_prev = {}
   final_prob = 0
 
   for i, state in enumerate(states):
     viterbi_cur[state] = initial_prob[state] * emission_prob[state][observations[0]]
+
+  v = [viterbi_cur[curr_state] for curr_state in viterbi_cur]
+  k = [curr_state for curr_state in viterbi_cur]
+  backpointers.append(k[v.index(max(v))])
 
   viterbi.append(viterbi_cur)
   viterbi_prev = viterbi_cur
@@ -36,6 +41,10 @@ def forward(observations, states, initial_prob, transition_prob, emission_prob):
       viterbi_cur = {}
       for i, state in enumerate(states):
         viterbi_cur[state] = max(viterbi_prev[prev_state] * transition_prob[prev_state][state] * emission_prob[state][obs] for prev_state in viterbi_prev)
+        
+      v = [viterbi_cur[curr_state] for curr_state in viterbi_cur]
+      k = [curr_state for curr_state in viterbi_cur]
+      backpointers.append(k[v.index(max(v))])
 
       viterbi.append(viterbi_cur)
       viterbi_prev = viterbi_cur
@@ -48,5 +57,8 @@ viterbi, final_prob, backpointers = forward(observations, states, initial_prob, 
 
 pp = pprint.PrettyPrinter(indent=2)
 pp.pprint(viterbi)
+
+pp = pprint.PrettyPrinter(indent=2)
+pp.pprint(backpointers)
 
 print "Probability of given sequence: ", final_prob
